@@ -1,4 +1,4 @@
-﻿@model List<September26.Dto.UserDto>
+﻿@model September26.Dto.User
 
 @*@{
     ViewData["Title"] = "Home Page";
@@ -10,9 +10,12 @@
 </div>*@
 
 
-@foreach (var x in Model)
-{
-    <p>@x.FullName</p>
-    <p>@x.Email</p>
-}
+@* @foreach (var x in Model) *@
+@* { *@
+    @* <p>@Model.FullName</p> *@
+    @* <p>@Model.Email</p> *@
+
+@* @Html.EditorFor(dto => dto.Number) *@
 @* @Html.EditorForModel() *@
+@* @Html.MySuperEditorFor(dto => dto.Email) *@
+@* @Html.MySuperEditorFor(dto => dto.Number) *@

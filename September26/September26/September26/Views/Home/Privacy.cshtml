@@ -1,6 +1,21 @@
-﻿@{
+﻿@using System.Linq.Expressions
+@using September26.Dto
+@using September26.Helpers
+@model September26.Dto.User
+
+@{
     ViewData["Title"] = "Privacy Policy";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+
+<h3>EditorFor</h3>
+@Html.MySuperEditorFor(dto => dto.Number)
+
+<h3>Imitation of EditorForModel</h3>
+@foreach (var memberInfo in Model.GetType().GetProperties())
+{
+    var parameterExpression = Expression.Parameter(typeof(User));
+    var expr = Expression.Lambda(Expression.MakeMemberAccess(parameterExpression, memberInfo), parameterExpression);
+    @Html.MySuperEditorFor(expr);
+}

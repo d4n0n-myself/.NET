@@ -7,6 +7,13 @@ namespace September26.Dto
 	{
 		public string FullName => $"{FirstName} {LastName}";
 
+		[DataType(DataType.Currency)]
+		public int Number { get; set; }
+		
+		public decimal Alert { get; set; }
+
+		public TypeCode Code { get; set; }
+		
 		public Organisation Organisation { get; set; }
 		[DataType(DataType.Upload)]
 		public string FirstName { get; set; }

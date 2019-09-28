@@ -1,11 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens.Saml;
 using September26.Dto;
 using September26.Models;
 
@@ -39,11 +36,11 @@ namespace September26.Controllers
 //				Email = x.Email
 //			};
 
-			var dtos = accounts.AsQueryable()
-				.ProjectTo<UserDto>(Startup.MapperConfiguration)
-				.ToList();
+//			var dtos = accounts.AsQueryable()
+//				.ProjectTo<UserDto>(Startup.MapperConfiguration)
+//				.ToList();
 			
-			return View(dtos);
+			return View();
 		}
 
 		private void GetExpression()
@@ -70,7 +67,7 @@ namespace September26.Controllers
 
 		public IActionResult Privacy()
 		{
-			return View();
+			return View(new User());
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
