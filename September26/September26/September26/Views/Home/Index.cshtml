@@ -1,4 +1,5 @@
-﻿@model September26.Dto.User
+﻿@using September26.Helpers
+@model September26.Dto.User
 
 @*@{
     ViewData["Title"] = "Home Page";
@@ -15,7 +16,7 @@
     @* <p>@Model.FullName</p> *@
     @* <p>@Model.Email</p> *@
 
-@* @Html.EditorFor(dto => dto.Number) *@
+@Html.EditorFor(dto => dto.Organisation)
 @* @Html.EditorForModel() *@
-@* @Html.MySuperEditorFor(dto => dto.Email) *@
+@* @Html.MySuperEditorFor() *@
 @* @Html.MySuperEditorFor(dto => dto.Number) *@

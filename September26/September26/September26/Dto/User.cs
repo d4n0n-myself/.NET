@@ -10,11 +10,12 @@ namespace September26.Dto
 		[DataType(DataType.Currency)]
 		public int Number { get; set; }
 		
-		public decimal Alert { get; set; }
+		public bool Alert { get; set; }
 
 		public TypeCode Code { get; set; }
 		
 		public Organisation Organisation { get; set; }
+		
 		[DataType(DataType.Upload)]
 		public string FirstName { get; set; }
 		
@@ -40,5 +41,8 @@ namespace September26.Dto
 	public class Organisation
 	{
 		public string Name { get; set; }
+
+		[DataType(DataType.EmailAddress)]
+		public string Email { get; set; }
 	}
 }

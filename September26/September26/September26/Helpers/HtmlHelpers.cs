@@ -37,7 +37,7 @@ namespace September26.Helpers
 
             sb.Append(TryGetInputByDataType(memberExpression, out var input)
                 ? input
-                : $"<input id=\"{memberName}\" type=\"{GetInputType(expression.Body.Type)}\"> </input>");
+                : GetInput(expression.Body.Type, memberName));
 
             sb.Append("<br>");
 
@@ -93,8 +93,21 @@ namespace September26.Helpers
             }
         }
 
-        private static string GetInputType(Type type)
+        private static string GetInput(Type type, string memberName)
         {
+            if (type.IsEnum)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine($"<select id={memberName}>");
+                foreach (var enumName in type.GetEnumNames())
+                {
+                    sb.AppendLine($@"<option value=""{enumName}"">{enumName}</option>");
+                }
+                sb.Append("</select>");
+                return sb.ToString();
+            }
+
+            string inputType;
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Byte:
@@ -108,12 +121,20 @@ namespace September26.Helpers
                 case TypeCode.Decimal:
                 case TypeCode.Double:
                 case TypeCode.Single:
-                    return "number";
+                    inputType = "number";
+                    break;
+                case TypeCode.Boolean:
+                    inputType = "checkbox";
+                    break;
                 case TypeCode.DateTime:
-                    return "datetime-local";
+                    inputType = "datetime-local";
+                    break;
                 default:
-                    return "text";
+                    inputType = "text";
+                    break;
             }
+            
+            return $"<input id=\"{memberName}\" type=\"{inputType}\"></input>";
         }
     }
 }
