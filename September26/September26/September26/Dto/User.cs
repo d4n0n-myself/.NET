@@ -16,7 +16,6 @@ namespace September26.Dto
 		
 		public Organisation Organisation { get; set; }
 		
-		[DataType(DataType.Upload)]
 		public string FirstName { get; set; }
 		
 		public string LastName { get; set; }
