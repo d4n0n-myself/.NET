@@ -67,7 +67,12 @@ namespace September26.Controllers
 
 		public IActionResult Privacy()
 		{
-			return View(new User());
+			return View(new User()
+			{
+				FirstName = "Hello", 
+				LastName = "its me merio",
+				Organisation = new Organisation() {Name = "SuperOrg", Email = "superorg@gmaiol.com"}
+			});
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

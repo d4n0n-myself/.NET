@@ -10,6 +10,19 @@ namespace September26.Helpers
 {
     public static class HtmlHelpers
     {
+        public static HtmlString MySuperEditorForModel<T>(this IHtmlHelper<T> helper)
+        {
+            var sb = new StringBuilder();
+            foreach (var memberInfo in helper.ViewData.Model.GetType().GetProperties())
+            {
+                var parameterExpression = Expression.Parameter(helper.ViewData.Model.GetType());
+                var expr = Expression.Lambda(Expression.MakeMemberAccess(parameterExpression, memberInfo), parameterExpression);
+                sb.Append(helper.MySuperEditorFor(expr));
+            }
+
+            return new HtmlString(sb.ToString());
+        }
+        
         public static HtmlString MySuperEditorFor<T,TResult>(this IHtmlHelper<T> helper,
             Expression<Func<T,TResult>> expression)
         {
@@ -25,26 +38,39 @@ namespace September26.Helpers
             if (expression.Body.NodeType != ExpressionType.MemberAccess)
                 throw new ArgumentException("Can't process anything but properties and fields", nameof(expression));
 
-            var memberExpression = expression.Body as MemberExpression;
-            if (memberExpression == null)
+            if (!(expression.Body is MemberExpression memberExpression))
                 throw new InvalidOperationException("Expression must be a member expression");
             
             var sb = new StringBuilder();
+
+//            if (!memberExpression.Type.IsPrimitive && memberExpression.Type.IsClass)
+//            {
+//                foreach (var memberInfo in memberExpression.Type.GetProperties())
+//                {
+//                    var parameterExpression = Expression.Parameter(memberExpression.Type);
+//                    var expr = Expression.Lambda(Expression.MakeMemberAccess(parameterExpression, memberInfo), parameterExpression);
+//                    sb.Append(helper.MySuperEditorFor(expr));
+//                }
+//                return new HtmlString(sb.ToString());
+//            }
+            
             var memberName = memberExpression.Member.Name;
             
             sb.Append($"<label for=\"{memberName}\">{memberName}</label>");
             sb.Append("<br>");
 
-            sb.Append(TryGetInputByDataType(memberExpression, out var input)
+            var memberValue = helper.ViewData.Model.GetType().GetProperty(memberExpression.Member.Name)?.GetValue(helper.ViewData.Model);
+            
+            sb.Append(TryGetInputByDataType(memberExpression, memberValue, out var input)
                 ? input
-                : GetInput(expression.Body.Type, memberName));
+                : GetInput(expression.Body.Type, memberName, memberValue));
 
             sb.Append("<br>");
 
             return new HtmlString(sb.ToString());
         }
 
-        private static bool TryGetInputByDataType(MemberExpression expression, out string input)
+        private static bool TryGetInputByDataType(MemberExpression expression, object memberValue, out string input)
         {
             var customAttributes = expression.Member.GetCustomAttributes(typeof(DataTypeAttribute), true);
             if (customAttributes.Length <= 0)
@@ -55,14 +81,14 @@ namespace September26.Helpers
 
             var attribute = (DataTypeAttribute) customAttributes.First();
             var memberName = expression.Member.Name;
-            
+
             if (attribute.DataType == DataType.MultilineText)
             {
-                input = $@"<textarea id=""{memberName}""></textarea>";
+                input = $@"<textarea id=""{memberName}"">{memberValue}</textarea>";
                 return true;
             }
 
-            input = $"<input id=\"{memberName}\" type=\"{GetInputTypeByDataType(attribute.DataType)}\"> </input>";
+            input = $"<input id=\"{memberName}\" type=\"{GetInputTypeByDataType(attribute.DataType)}\" value=\"{memberValue}\"></input>";
             return true;
         }
 
@@ -93,7 +119,7 @@ namespace September26.Helpers
             }
         }
 
-        private static string GetInput(Type type, string memberName)
+        private static string GetInput(Type type, string memberName, object memberValue)
         {
             if (type.IsEnum)
             {
@@ -133,8 +159,8 @@ namespace September26.Helpers
                     inputType = "text";
                     break;
             }
-            
-            return $"<input id=\"{memberName}\" type=\"{inputType}\"></input>";
+
+            return $"<input id=\"{memberName}\" type=\"{inputType}\" value=\"{memberValue}\"></input>";
         }
     }
 }

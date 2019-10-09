@@ -12,10 +12,5 @@
 <h3>EditorFor</h3>
 @Html.MySuperEditorFor(dto => dto.Number)
 
-<h3>Imitation of EditorForModel</h3>
-@foreach (var memberInfo in Model.GetType().GetProperties())
-{
-    var parameterExpression = Expression.Parameter(typeof(User));
-    var expr = Expression.Lambda(Expression.MakeMemberAccess(parameterExpression, memberInfo), parameterExpression);
-    @Html.MySuperEditorFor(expr);
-}
+@* <h3>Imitation of EditorForModel</h3> *@
+@* @Html.MySuperEditorForModel() *@
