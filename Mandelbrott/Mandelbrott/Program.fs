@@ -23,13 +23,14 @@ let mapPlane (x, y, s, mx, my) =
 
 // раскрасить точки, не относящиеся к множеству
 let colorize c =
-    let r = (4 * c) % 255
-    let g = (8 * c) % 255
-    let b = (10 * c) % 255
+    let random = new Random()
+    let r = (random.Next(16) * c) % 255
+    let g = (random.Next(16) * c) % 255
+    let b = (random.Next(16) * c) % 255
     Color.FromArgb(r, g, b)
 
 let createImage (s, mx, my, iter) =
-    let image = new Bitmap(1920, 1080)
+    let image = new Bitmap(400, 400)
     for x = 0 to image.Width - 1 do
         for y = 0 to image.Height - 1 do
             let count = isInMandelbrotSet (Complex.Zero, (mapPlane (x, y, s, mx, my)), iter, 0)
@@ -42,4 +43,4 @@ let createImage (s, mx, my, iter) =
     form
 
 [<STAThread>]
-do Application.Run(createImage (1.5, -2.5, -1.5, 25))
+do Application.Run(createImage (1.5, -1.5, -1.5, 20))
