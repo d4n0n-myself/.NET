@@ -2,6 +2,8 @@
 
 module Program =
 
+type Operator = | Addition | Subtraction | Multiplication | Division
+
 type MaybeBuilder() =
    member this.Bind(x, f) =
       match x with
@@ -11,14 +13,7 @@ type MaybeBuilder() =
    member this.Return(x) =
       Some x
 
-type Operator = Addition | Subtraction | Multiplication | Division
-
-let tryParseDouble = fun (str : string) ->
-   match Double.TryParse(str) with
-   | (true, double) -> Some(double)
-   | _ -> None
-
-let parseOperator = fun (op) ->
+let parseOperator = fun op ->
    match op with
    | "+" -> Some(Addition)
    | "-" -> Some(Subtraction)
@@ -26,23 +21,41 @@ let parseOperator = fun (op) ->
    | "/" -> Some(Division)
    | _ -> None
 
+let tryParseDouble = fun (str: string) ->
+   match Double.TryParse(str) with
+   | (true, double) -> Some(double)
+   | _ -> None
+
+let exitProgram str =
+   if (str.Equals "exit") then 
+    Environment.Exit(-1)
+   0
+    
+
 [<EntryPoint>]
 let main _ =
-   let maybe = new MaybeBuilder()
-   Console.WriteLine "Введите цифру, оператор, цифру"
-   
-   let result = maybe {
-      let! value1 = Console.ReadLine() |> tryParseDouble
-      let! op = Console.ReadLine() |> parseOperator
-      let! value2 = Console.ReadLine() |> tryParseDouble
+   while true do
+    let maybe = new MaybeBuilder()
+    Console.WriteLine "Введите цифру, оператор, цифру"
+    let result = maybe {
+     let input1 = Console.ReadLine()
+     exitProgram input1 |> ignore
+     let! value1 = input1 |> tryParseDouble
+     let! op = Console.ReadLine() |> parseOperator
+     let! value2 = Console.ReadLine() |> tryParseDouble
 
-      return
-         match op with
-         | Addition -> value1 + value2
-         | Subtraction -> value1 - value2
-         | Multiplication -> value1 * value2
-         | Division -> value1 / value2
-   }
+     return
+        match op with
+           | Addition -> value1 + value2
+           | Subtraction -> value1 - value2
+           | Multiplication -> value1 * value2
+           | Division -> value1 / value2
+    }
 
-   Console.WriteLine(if result.IsSome then "Result: " + result.Value.ToString() else "Неверный ввод попробуйте снова")
+    if result.IsSome then
+      let res = String.Join(" ", "Result: " + result.Value.ToString());
+      Console.WriteLine res
+    else
+      Console.WriteLine "Неверный ввод попробуйте снова"
    0
+ 
