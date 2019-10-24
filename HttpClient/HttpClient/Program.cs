@@ -11,6 +11,7 @@ namespace HttpClient
 		static void Main(string[] args)
 		{
 			GetByWebClient();
+//			Task.Run(async () => await GetByHttpClient());		
 			Thread.Sleep(1000);
 		}
 
@@ -19,6 +20,19 @@ namespace HttpClient
 			var webClient = new WebClient();
 			var requestUri = new Uri("http://google.com");
 			var responseString = webClient.DownloadString(requestUri);
+			Console.WriteLine("Headers");
+			
+			foreach (string header in webClient.ResponseHeaders)
+			{
+				if (string.IsNullOrEmpty(header)) continue;
+
+				Console.Write($"{header}");
+
+				var values = webClient.ResponseHeaders.GetValues(header);
+				if (values != null)
+					Console.WriteLine($" {string.Join(" ", values)}");
+			}
+
 			Console.WriteLine(responseString);
 		}
 
