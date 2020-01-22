@@ -22,7 +22,7 @@ namespace WindowsFormsApp1
 		[STAThread]
 		static void Main()
 		{
-
+			// http://rxwiki.wikidot.com/101samples
 			AppDomain.CurrentDomain.UnhandledException +=
 				(sender, args) => HandleUnhandledException(args.ExceptionObject as Exception);
 			Application.ThreadException +=
